@@ -19,11 +19,13 @@ void render() {
 
     std::ofstream ofs;
     ofs.open("./out.ppm");
-    ofs << "P6\n" << width << " " << height << "\n255\n";
+    ofs << "P3\n" << width << " " << height << "\n255\n";
     for (size_t i = 0; i < height*width; i++) {
         for (size_t j = 0; j < 3; j++) {
-            ofs << (char)(255 * std::max(0.f, std::min(1.f, framebuffer[i][j])));
+            ofs << (int)(255 * std::max(0.f, std::min(1.f, framebuffer[i][j])));
+            ofs << ' ';
         }
+        ofs << '\n';
     }
     ofs.close();
 
