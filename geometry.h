@@ -15,15 +15,16 @@ class Vec3f {/*vec3 class based off of peter shirley's implementation in Ray Tra
         float operator[](int i) const {return e[i];}
         float& operator[](int i) {return e[i];}
         
-        Vec3f operator-(const Vec3f &u, const Vec3f &v) {
-            return Vec3f(u[0]-v[0], u[1]-v[1], u[2]-v[2]);
-        }
+
     public:
 
         // array for {x,y,z} etc ...
         float e[3];    
 };
 
+inline Vec3f operator-(const Vec3f &u, const Vec3f &v) {
+    return Vec3f(u.e[0] - v.e[0], u.e[1] - v.e[1], u.e[2] - v.e[2]);
+}
 
 
 class Sphere {/*sphere class based off ssloy's tinyraytracer lessons*/
