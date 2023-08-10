@@ -26,6 +26,24 @@ inline Vec3f operator-(const Vec3f &u, const Vec3f &v) {
     return Vec3f(u.e[0] - v.e[0], u.e[1] - v.e[1], u.e[2] - v.e[2]);
 }
 
+inline Vec3f operator*(const Vec3f &u, const Vec3f &v) {
+    return Vec3f(u.e[0] * v.e[0], u.e[1] * v.e[1], u.e[2] * v.e[2]);
+}
+
+inline Vec3f operator*(float f, const Vec3f &v) {
+    return Vec3f(f * v.e[0], f * v.e[1], f * v.e[2]);
+}
+
+inline Vec3f operator*(const Vec3f &v, float f) {
+    return f * v;
+}
+
+inline float dot(const Vec3f &u, const Vec3f &v) {
+    return u.e[0] * v.e[0] +
+           u.e[1] * v.e[1] +
+           u.e[2] * v.e[2];
+}
+
 
 class Sphere {/*sphere class based off ssloy's tinyraytracer lessons*/
     Vec3f center;
@@ -35,7 +53,19 @@ class Sphere {/*sphere class based off ssloy's tinyraytracer lessons*/
         Sphere(const Vec3f &c, const float &r) : center(c), radius(r) {}
 
         bool ray_intersect(const Vec3f &origin, const Vec3f &direction, float &t0) const {
-            Vec3f p_to_c = center - origin;
+            Vec3f L = center - origin;
+            float tca = dot(L, direction);
+            float d2 = dot(L, L) - tca*tca;
+            if (d2 > radius*radius) return false;
+            float thc = sqrtf(radius*radius - d2);
+            t0 = tca - thc;
+            float t1 = tca + thc;
+            if (t0 < 0) {
+                t0 = t1;
+                return false;
+            }
+            return true;
+
         } 
 };
 

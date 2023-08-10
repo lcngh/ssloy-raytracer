@@ -5,6 +5,11 @@
 #include <vector>
 #include "geometry.h"
 
+Vec3f cast_ray(const Vec3f &origin, const Vec3f &direction, const Sphere &sphere) {
+    float sphere_distance = std::numeric_limits<float>::max();
+    
+}
+
 void render() {
     const int width  = 1024;
     const int height = 768;
