@@ -2,6 +2,7 @@
 #define GEOMETRY_H
 
 #include <cmath>
+#include "collidable.h"
 
 
 class Vec3f {/*vec3 class based off of peter shirley's implementation in Ray Tracing Weekend Book 1*/
@@ -30,8 +31,7 @@ class Vec3f {/*vec3 class based off of peter shirley's implementation in Ray Tra
         }
 
         float operator[](int i) const {return e[i];}
-        float& operator[](int i) {return e[i];}
-                
+        float& operator[](int i) {return e[i];}        
 
     public:
 
@@ -61,29 +61,26 @@ inline float dot(const Vec3f &u, const Vec3f &v) {
            u.e[2] * v.e[2];
 }
 
-
-
-class Sphere {/*sphere class based off ssloy's tinyraytracer lessons*/
+class Sphere : public Collidable {/*sphere class based off ssloy's tinyraytracer lessons*/
     Vec3f center;
     float radius;
 
     public:
         Sphere(const Vec3f &c, const float &r) : center(c), radius(r) {}
 
-        bool ray_intersect(const Vec3f &origin, const Vec3f &direction, float &t0) const {
+        virtual bool ray_intersect(const Vec3f &origin, const Vec3f &direction) const override{
             Vec3f L = center - origin;
             float tca = dot(L, direction);
             float d2 = dot(L, L) - tca*tca;
             if (d2 > radius*radius) return false;
             float thc = sqrtf(radius*radius - d2);
-            t0 = tca - thc;
+            float t0 = tca - thc;
             float t1 = tca + thc;
             if (t0 < 0) {
                 t0 = t1;
                 return false;
             }
             return true;
-
         } 
 };
 
