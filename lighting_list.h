@@ -17,7 +17,6 @@ class Lighting_List : public Light {
 
         void clear() {objects.clear();}
         void add(shared_ptr<Light> object) {objects.push_back(object);}
-        //shared_ptr<Light> operator[](int i) {return objects[i];}
 
     public:
         std::vector<shared_ptr<Light>> objects;

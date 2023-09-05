@@ -89,6 +89,12 @@ inline float dot(const Vec3f &u, const Vec3f &v) {
            u.e[2] * v.e[2];
 }
 
+inline float dot(const Vec3f &u, const shared_ptr<Vec3f> &v) {
+    return u.e[0] * v->e[0] +
+           u.e[1] * v->e[1] +
+           u.e[2] * v->e[2];
+}
+
 inline float distance(const Vec3f &u, const Vec3f &v) {
     return sqrt((u.e[0] - v.e[0]) * (u.e[0] - v.e[0]) +
                 (u.e[1] - v.e[1]) * (u.e[1] - v.e[1]) +
