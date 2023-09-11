@@ -10,6 +10,7 @@ struct Collision_Record {
 
     //float point;
     float sphere_distance;
+    std::shared_ptr<Vec3f> last_direction;
     std::shared_ptr<Vec3f> last_hit;
     std::shared_ptr<Vec3f> last_center;
     std::shared_ptr<Vec3f> last_normal;

@@ -70,8 +70,24 @@ inline Vec3f operator*(const Vec3f &u, const Vec3f &v) {
     return Vec3f(u.e[0] * v.e[0], u.e[1] * v.e[1], u.e[2] * v.e[2]);
 }
 
+inline Vec3f operator*(const Vec3f &u, const shared_ptr<Vec3f> &v) {
+    return Vec3f(u.e[0] * v->e[0], u.e[1] * v->e[1], u.e[2] * v->e[2]);
+}
+
+inline Vec3f operator*(const shared_ptr<Vec3f> &u, const Vec3f &v) {
+    return Vec3f(u->e[0] * v.e[0], u->e[1] * v.e[1], u->e[2] * v.e[2]);
+}
+
 inline Vec3f operator*(float f, const Vec3f &v) {
     return Vec3f(f * v.e[0], f * v.e[1], f * v.e[2]);
+}
+
+inline Vec3f operator*(float f, const shared_ptr<Vec3f> &v) {
+    return Vec3f(f * v->e[0], f * v->e[1], f * v->e[2]);
+}
+
+inline Vec3f operator*(const shared_ptr<Vec3f> &v, float f) {
+    return f * v;
 }
 
 inline Vec3f operator*(const Vec3f &v, float f) {

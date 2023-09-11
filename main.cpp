@@ -27,6 +27,7 @@ bool scene_intersect(const Vec3f &origin, const Vec3f &direction, const Collidab
 
 Vec3f cast_ray(const Vec3f &origin, const Vec3f &direction, const Collidable_List &world, int depth, const Lighting_List &lights) {
     Collision_Record record;
+    record.last_direction = make_shared<Vec3f>(direction);
     Vec3f hit, normal, attenuation;
     float diffuse_light_intensity = 0;
 
