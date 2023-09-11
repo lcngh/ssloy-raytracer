@@ -41,4 +41,17 @@ class Simple_Lighting : public Material {
         Vec3f albedo;
 };
 
+
+class Phong_Lighting : public Material {
+    public:
+        Phong_Lighting(const Vec3f &color, const Vec3f &albedo, const float &specular) : albedo(albedo), diffuse_color(color), specular_exponent(specular) {}
+
+        
+
+    public:
+        Vec3f albedo;
+        Vec3f diffuse_color;
+        float specular_exponent;
+};
+
 #endif
