@@ -18,6 +18,7 @@ bool scene_intersect(const Vec3f &origin, const Vec3f &direction, const Collidab
         record.last_hit = make_shared<Vec3f>(hit);
         normal = (hit - record.last_center).normalize();
         record.last_normal = make_shared<Vec3f>(normal);
+        record.last_direction = make_shared<Vec3f>(direction);
     }
     
 
@@ -27,13 +28,12 @@ bool scene_intersect(const Vec3f &origin, const Vec3f &direction, const Collidab
 
 Vec3f cast_ray(const Vec3f &origin, const Vec3f &direction, const Collidable_List &world, int depth, const Lighting_List &lights) {
     Collision_Record record;
-    record.last_direction = make_shared<Vec3f>(direction);
     Vec3f hit, normal, attenuation;
     float diffuse_light_intensity = 0;
 
     if (scene_intersect(origin, direction, world, hit, normal, record)) {
         if (record.mat_ptr->scatter(record, attenuation, diffuse_light_intensity, lights)) {
-            return attenuation * diffuse_light_intensity;
+            return attenuation;
         }
     }
     // color for miss
@@ -85,6 +85,8 @@ int main() {
     auto GREEN= Vec3f(0.0, 1.0, 0.0);
     auto BLUE = Vec3f(0.0, 0.0, 1.0);
 
+    auto default_albedo = Vec3f(0.6, 0.3, 0.0);
+
     auto flat_red  = make_shared<Flat_Color>(RED);
     auto flat_green= make_shared<Flat_Color>(GREEN);
     auto flat_blue = make_shared<Flat_Color>(BLUE);
@@ -93,16 +95,25 @@ int main() {
     auto simple_green = make_shared<Simple_Lighting>(GREEN);
     auto simple_blue = make_shared<Simple_Lighting>(BLUE);
 
+    auto phong_red = make_shared<Phong_Lighting>(RED, default_albedo, 50.0);
+    auto phong_green = make_shared<Phong_Lighting>(GREEN, default_albedo, 50.0);
+    auto phong_blue = make_shared<Phong_Lighting>(BLUE, default_albedo, 50.0);
+
     auto lights = Lighting_List();
     lights.add(make_shared<Light>(Vec3f( -20, 20, 20), 1.5));
 
-    world.add(make_shared<Sphere>(Vec3f(-3, -3, -10), 1, flat_red));
-    world.add(make_shared<Sphere>(Vec3f( 0, -3, -10), 1, flat_green));
-    world.add(make_shared<Sphere>(Vec3f( 3, -3, -10), 1, flat_blue));
+    world.add(make_shared<Sphere>(Vec3f(-3, 3, -10), 1, flat_red));
+    world.add(make_shared<Sphere>(Vec3f( 0, 3, -10), 1, flat_green));
+    world.add(make_shared<Sphere>(Vec3f( 3, 3, -10), 1, flat_blue));
 
-    world.add(make_shared<Sphere>(Vec3f(-3, 3, -10), 1, simple_red));
-    world.add(make_shared<Sphere>(Vec3f( 0, 3, -10), 1, simple_green));
-    world.add(make_shared<Sphere>(Vec3f( 3, 3, -10), 1, simple_blue));
+    world.add(make_shared<Sphere>(Vec3f(-3, 0, -10), 1, simple_red));
+    world.add(make_shared<Sphere>(Vec3f( 0, 0, -10), 1, simple_green));
+    world.add(make_shared<Sphere>(Vec3f( 3, 0, -10), 1, simple_blue));
+
+    world.add(make_shared<Sphere>(Vec3f(-3, -3, -10), 1, phong_red));
+    world.add(make_shared<Sphere>(Vec3f( 0, -3, -10), 1, phong_green));
+    world.add(make_shared<Sphere>(Vec3f( 3, -3, -10), 1, phong_blue));
+
 
     render(world, lights);
 

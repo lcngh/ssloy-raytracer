@@ -33,8 +33,8 @@ class Vec3f {/*vec3 class based off of peter shirley's implementation in Ray Tra
         }
 
         Vec3f& normalize() {
-            float v_magnitude = magnitude();
-            return *this *= (1.f / v_magnitude);
+            //float v_magnitude = magnitude();
+            return *this *= (1.f / magnitude());
         }
 
         float length_squared() const {

@@ -33,7 +33,7 @@ class Simple_Lighting : public Material {
                 Vec3f light_direction = (lights.objects[i]->position - record.last_hit).normalize();
                 diffuse_light_intensity += lights.objects[i]->intensity * std::max(0.f, dot(light_direction, record.last_normal));
             }
-            attenuation = albedo;
+            attenuation = albedo * diffuse_light_intensity;
             return true;
         };
 
@@ -44,7 +44,9 @@ class Simple_Lighting : public Material {
 class Phong_Lighting : public Material {
 
     Vec3f reflect( Vec3f &I, const shared_ptr<Vec3f> &N) const {
-        return I - N*2.f*(I*N);
+        //return I - N*2.f*(I*N); 
+        return I - N * 2.f * dot(I, N);
+        
     }
 
     public:
@@ -57,6 +59,7 @@ class Phong_Lighting : public Material {
                 diffuse_light_intensity += lights.objects[i]->intensity * std::max(0.f, dot(light_direction, record.last_normal));
                 specular_light_intensity += powf(std::max(0.f, dot(reflect(light_direction, record.last_normal),record.last_direction)), specular_exponent) * lights.objects[i]->intensity;
             }
+            attenuation = diffuse_color * diffuse_light_intensity * albedo.e[0] + Vec3f(1.0, 1.0, 1.0) * specular_light_intensity * albedo.e[1];
             return true;
         };
         
