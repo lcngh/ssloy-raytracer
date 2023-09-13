@@ -19,6 +19,7 @@ bool scene_intersect(const Vec3f &origin, const Vec3f &direction, const Collidab
         normal = (hit - record.last_center).normalize();
         record.last_normal = make_shared<Vec3f>(normal);
         record.last_direction = make_shared<Vec3f>(direction);
+        record.world_reference = make_shared<Collidable_List>(world);
     }
     
 
@@ -39,6 +40,8 @@ Vec3f cast_ray(const Vec3f &origin, const Vec3f &direction, const Collidable_Lis
     // color for miss
     return Vec3f(1.0, 1.0, 1.0);
 }
+
+
 
 void render(const Collidable_List &world, const Lighting_List &lights) {
     const int height = 1080;

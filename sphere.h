@@ -2,7 +2,7 @@
 #define SPHERE_H
 #include <limits>
 #include <iostream>
-#include "geometry.h"
+//#include "geometry.h"
 #include "collidable_list.h"
 
 const float infinity = std::numeric_limits<float>::infinity();
