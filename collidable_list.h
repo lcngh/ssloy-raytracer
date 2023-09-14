@@ -30,7 +30,9 @@ bool Collidable_List::ray_intersect(const Vec3f &origin, const Vec3f &direction,
     bool collision = false;
 
     for (const auto& object : objects) {
-        if (object->ray_intersect(origin, direction, temp_record)) {
+        if (object->ray_intersect(origin, 
+        direction, 
+        temp_record)) {
             collision = true;
             record = temp_record;
         }

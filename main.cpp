@@ -9,8 +9,30 @@
 #include "sphere.h"
 #include "materials.h"
 
-bool scene_intersect(const Vec3f &origin, const Vec3f &direction, const Collidable_List &world, Vec3f &hit, Vec3f &normal, Collision_Record &record) {
+// bool scene_intersect(const Vec3f &origin, const Vec3f &direction, const Collidable_List &world, Vec3f &hit, Vec3f &normal, Collision_Record &record) {
     
+//     float nearest_distance = 1e10;
+//     if (world.ray_intersect(origin, direction, record) && record.t < nearest_distance) {
+//         nearest_distance = record.t;
+//         hit = origin + direction*nearest_distance;
+//         record.last_hit = make_shared<Vec3f>(hit);
+//         normal = (hit - record.last_center).normalize();
+//         record.last_normal = make_shared<Vec3f>(normal);
+//         record.last_direction = make_shared<Vec3f>(direction);
+//         record.world_reference = make_shared<Collidable_List>(world);
+//     }
+    
+
+//     return nearest_distance<1000;
+
+// }
+
+Vec3f cast_ray(const Vec3f &origin, const Vec3f &direction, const Collidable_List &world, int depth, const Lighting_List &lights) {
+    Collision_Record record;
+    Vec3f hit, normal, attenuation;
+    float diffuse_light_intensity = 0.0;
+    bool distance_in_range;
+
     float nearest_distance = 1e10;
     if (world.ray_intersect(origin, direction, record) && record.t < nearest_distance) {
         nearest_distance = record.t;
@@ -20,23 +42,21 @@ bool scene_intersect(const Vec3f &origin, const Vec3f &direction, const Collidab
         record.last_normal = make_shared<Vec3f>(normal);
         record.last_direction = make_shared<Vec3f>(direction);
         record.world_reference = make_shared<Collidable_List>(world);
+        distance_in_range = nearest_distance<1000;
     }
-    
 
-    return nearest_distance<1000;
-
-}
-
-Vec3f cast_ray(const Vec3f &origin, const Vec3f &direction, const Collidable_List &world, int depth, const Lighting_List &lights) {
-    Collision_Record record;
-    Vec3f hit, normal, attenuation;
-    float diffuse_light_intensity = 0;
-
-    if (scene_intersect(origin, direction, world, hit, normal, record)) {
+    if (distance_in_range) {
         if (record.mat_ptr->scatter(record, attenuation, diffuse_light_intensity, lights)) {
             return attenuation;
         }
     }
+
+    // if (scene_intersect(origin, direction, world, hit, normal, record)) {
+    //     if (record.mat_ptr->scatter(record, attenuation, diffuse_light_intensity, lights)) {
+    //         return attenuation;
+    //     }
+    // }
+    
     // color for miss
     return Vec3f(1.0, 1.0, 1.0);
 }
@@ -90,28 +110,29 @@ int main() {
 
     auto default_albedo = Vec3f(0.6, 0.3, 0.0);
 
-    auto flat_red  = make_shared<Flat_Color>(RED);
-    auto flat_green= make_shared<Flat_Color>(GREEN);
-    auto flat_blue = make_shared<Flat_Color>(BLUE);
+    auto flat_red   = make_shared<Flat>(RED);
+    auto flat_green = make_shared<Flat>(GREEN);
+    auto flat_blue  = make_shared<Flat>(BLUE);
 
-    auto simple_red = make_shared<Simple_Lighting>(RED);
-    auto simple_green = make_shared<Simple_Lighting>(GREEN);
-    auto simple_blue = make_shared<Simple_Lighting>(BLUE);
+    auto lambertian_red   = make_shared<Lambertian>(RED);
+    auto lambertian_green = make_shared<Lambertian>(GREEN);
+    auto lambertian_blue  = make_shared<Lambertian>(BLUE);
 
-    auto phong_red = make_shared<Phong_Lighting>(RED, default_albedo, 50.0);
-    auto phong_green = make_shared<Phong_Lighting>(GREEN, default_albedo, 50.0);
-    auto phong_blue = make_shared<Phong_Lighting>(BLUE, default_albedo, 50.0);
+    auto phong_red   = make_shared<Phong>(RED,   default_albedo, 50.0);
+    auto phong_green = make_shared<Phong>(GREEN, default_albedo, 50.0);
+    auto phong_blue  = make_shared<Phong>(BLUE,  default_albedo, 50.0);
 
     auto lights = Lighting_List();
     lights.add(make_shared<Light>(Vec3f( -20, 20, 20), 1.5));
+    //lights.add(make_shared<Light>(Vec3f(  7,  0, -10), 1.5));
 
     world.add(make_shared<Sphere>(Vec3f(-3, 3, -10), 1, flat_red));
     world.add(make_shared<Sphere>(Vec3f( 0, 3, -10), 1, flat_green));
     world.add(make_shared<Sphere>(Vec3f( 3, 3, -10), 1, flat_blue));
 
-    world.add(make_shared<Sphere>(Vec3f(-3, 0, -10), 1, simple_red));
-    world.add(make_shared<Sphere>(Vec3f( 0, 0, -10), 1, simple_green));
-    world.add(make_shared<Sphere>(Vec3f( 3, 0, -10), 1, simple_blue));
+    world.add(make_shared<Sphere>(Vec3f(-3, 0, -10), 1, lambertian_red));
+    world.add(make_shared<Sphere>(Vec3f( 0, 0, -10), 1, lambertian_green));
+    world.add(make_shared<Sphere>(Vec3f( 3, 0, -10), 1, lambertian_blue));
 
     world.add(make_shared<Sphere>(Vec3f(-3, -3, -10), 1, phong_red));
     world.add(make_shared<Sphere>(Vec3f( 0, -3, -10), 1, phong_green));
