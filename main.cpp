@@ -27,8 +27,11 @@
 
 // }
 
-Vec3f cast_ray(const Vec3f &origin, const Vec3f &direction, const Collidable_List &world, int depth, const Lighting_List &lights) {
+Vec3f cast_ray(const Vec3f &origin, const Vec3f &direction,  Collidable_List &world, const Lighting_List &lights) {
     Collision_Record record;
+    record.reflect_depth = 0;
+
+
     Vec3f hit, normal, attenuation;
     float diffuse_light_intensity = 0.0;
     bool distance_in_range;
@@ -36,6 +39,7 @@ Vec3f cast_ray(const Vec3f &origin, const Vec3f &direction, const Collidable_Lis
     float nearest_distance = 1e10;
     if (world.ray_intersect(origin, direction, record) && record.t < nearest_distance) {
         nearest_distance = record.t;
+        //std::cout << record.t << '\n';
         hit = origin + direction*nearest_distance;
         record.last_hit = make_shared<Vec3f>(hit);
         normal = (hit - record.last_center).normalize();
@@ -46,6 +50,7 @@ Vec3f cast_ray(const Vec3f &origin, const Vec3f &direction, const Collidable_Lis
     }
 
     if (distance_in_range) {
+        //std::cout << nearest_distance << '\n';
         if (record.mat_ptr->scatter(record, attenuation, diffuse_light_intensity, lights)) {
             return attenuation;
         }
@@ -63,11 +68,11 @@ Vec3f cast_ray(const Vec3f &origin, const Vec3f &direction, const Collidable_Lis
 
 
 
-void render(const Collidable_List &world, const Lighting_List &lights) {
+void render( Collidable_List &world, const Lighting_List &lights) {
     const int height = 1080;
     const float fov  = 3.14159/2.;
     const int width = 1920;
-    const int max_depth = 50;
+    //const int max_depth = 50;
 
     // vector of type Vec3f named framebuffer[]
     std::vector<Vec3f> framebuffer(width*height);
@@ -83,7 +88,7 @@ void render(const Collidable_List &world, const Lighting_List &lights) {
             float x =  (2*(i + 0.5)/(float)width  - 1)*tan(fov/2.)*width/(float)height;
             float y = -(2*(j + 0.5)/(float)height - 1)*tan(fov/2.);
             Vec3f direction = Vec3f(x, y, -1).normalize();
-            framebuffer[i+j*width] = cast_ray(Vec3f(0,0,0), direction, world, max_depth, lights);
+            framebuffer[i+j*width] = cast_ray(Vec3f(0,0,0), direction, world, lights);
         }
     }
 
@@ -107,8 +112,10 @@ int main() {
     auto RED  = Vec3f(1.0, 0.0, 0.0);
     auto GREEN= Vec3f(0.0, 1.0, 0.0);
     auto BLUE = Vec3f(0.0, 0.0, 1.0);
+    auto WHITE= Vec3f(1.0, 1.0, 1.0);
 
-    auto default_albedo = Vec3f(0.6, 0.3, 0.0);
+    auto default_albedo = Vec3f(0.6,  0.3, 0.0);
+    auto mirror_albedo  = Vec3f(0.0,  10.0, 0.8);
 
     auto flat_red   = make_shared<Flat>(RED);
     auto flat_green = make_shared<Flat>(GREEN);
@@ -121,22 +128,63 @@ int main() {
     auto phong_red   = make_shared<Phong>(RED,   default_albedo, 50.0);
     auto phong_green = make_shared<Phong>(GREEN, default_albedo, 50.0);
     auto phong_blue  = make_shared<Phong>(BLUE,  default_albedo, 50.0);
+    auto phong_white = make_shared<Phong>(WHITE, default_albedo, 50.0);
+
+    auto mirror = make_shared<Mirror>(WHITE, mirror_albedo, 1425.0);
 
     auto lights = Lighting_List();
-    lights.add(make_shared<Light>(Vec3f( -20, 20, 20), 1.5));
+    lights.add(make_shared<Light>(Vec3f( -20, 20,  20), 1.5));
+    lights.add(make_shared<Light>(Vec3f(  30, 50, -25), 1.8));
+    lights.add(make_shared<Light>(Vec3f(  30, 20,  30), 1.7));
+
+
+    world.add(make_shared<Sphere>(Vec3f(-3  ,    0, -16), 2, phong_blue));
+    world.add(make_shared<Sphere>(Vec3f(-1  , -1.5, -12), 2, mirror));
+    world.add(make_shared<Sphere>(Vec3f( 1.5, -0.5, -22), 3, phong_red));
+    world.add(make_shared<Sphere>(Vec3f( 7  ,    5, -18), 4, mirror));
+
+    // world.add(make_shared<Sphere>(Vec3f(-1  , -1.5, -12), 2, mirror));
+    // world.add(make_shared<Sphere>(Vec3f(-5  ,    0, -16), 2, phong_blue));
+    // world.add(make_shared<Sphere>(Vec3f( 7  ,    5, -18), 4, mirror));
+    // world.add(make_shared<Sphere>(Vec3f(-1.5, -0.5, -22), 3, phong_red));
+    
+    // world.add(make_shared<Sphere>(Vec3f(-1.5, -0.5, -22), 3, phong_red));
+    // world.add(make_shared<Sphere>(Vec3f( 7  ,    5, -18), 4, mirror));
+    // world.add(make_shared<Sphere>(Vec3f(-5  ,    0, -16), 2, phong_blue));
+    // world.add(make_shared<Sphere>(Vec3f(-1  , -1.5, -12), 2, mirror));
+
+    
+
+    // world.add(make_shared<Sphere>(Vec3f( 0, 0, -10), 2, phong_red));
+    // world.add(make_shared<Sphere>(Vec3f( 0, 0, -14), 2, mirror));
+    // world.add(make_shared<Sphere>(Vec3f( 0, 0, -16), 2, phong_green));
+    // world.add(make_shared<Sphere>(Vec3f( 0, 0, -18), 2, phong_blue));
+
+    
+    
+    
+    // world.add(make_shared<Sphere>(Vec3f( 0, 0, -18), 2, phong_blue));
+    // world.add(make_shared<Sphere>(Vec3f( -3, 0, -16), 2, phong_green));
+    // world.add(make_shared<Sphere>(Vec3f( -6, 0, -14), 2, mirror));
+    // world.add(make_shared<Sphere>(Vec3f( -9, 0, -10), 2, phong_red));
+    
+
+
     //lights.add(make_shared<Light>(Vec3f(  7,  0, -10), 1.5));
 
-    world.add(make_shared<Sphere>(Vec3f(-3, 3, -10), 1, flat_red));
-    world.add(make_shared<Sphere>(Vec3f( 0, 3, -10), 1, flat_green));
-    world.add(make_shared<Sphere>(Vec3f( 3, 3, -10), 1, flat_blue));
+    // world.add(make_shared<Sphere>(Vec3f(-3, 3, -10), 1, flat_red));
+    // world.add(make_shared<Sphere>(Vec3f( 0, 3, -10), 1, flat_green));
+    // world.add(make_shared<Sphere>(Vec3f( 3, 3, -10), 1, flat_blue));
 
-    world.add(make_shared<Sphere>(Vec3f(-3, 0, -10), 1, lambertian_red));
-    world.add(make_shared<Sphere>(Vec3f( 0, 0, -10), 1, lambertian_green));
-    world.add(make_shared<Sphere>(Vec3f( 3, 0, -10), 1, lambertian_blue));
+    // world.add(make_shared<Sphere>(Vec3f(-3, 0, -10), 1, lambertian_red));
+    // world.add(make_shared<Sphere>(Vec3f( 0, 0, -10), 1, lambertian_green));
+    // world.add(make_shared<Sphere>(Vec3f( 3, 0, -10), 1, lambertian_blue));
 
-    world.add(make_shared<Sphere>(Vec3f(-3, -3, -10), 1, phong_red));
-    world.add(make_shared<Sphere>(Vec3f( 0, -3, -10), 1, phong_green));
-    world.add(make_shared<Sphere>(Vec3f( 3, -3, -10), 1, phong_blue));
+    // world.add(make_shared<Sphere>(Vec3f(-3, -3, -10), 1, phong_red));
+    // world.add(make_shared<Sphere>(Vec3f( 0, -3, -10), 1, phong_green));
+    // world.add(make_shared<Sphere>(Vec3f( 3, -3, -10), 1, phong_blue));
+
+    // world.add(make_shared<Sphere>(Vec3f(8, 0, -15), 3, mirror));
 
 
     render(world, lights);

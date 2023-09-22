@@ -21,6 +21,7 @@ class Sphere : public Collidable {/*sphere class based off ssloy's tinyraytracer
             float t0 = tca - thc;
             record.mat_ptr = mat_ptr;
             record.last_center = make_shared<Vec3f>(center.e[0], center.e[1], center.e[2]);
+            //record.last_sphere_distance = distance_from_origin;
             if (t0>0.001) {
                 record.t = t0;
                 return true;

@@ -10,12 +10,14 @@ class Collidable_List;
 struct Collision_Record {
 
     //float point;
-    float sphere_distance;
+    float last_sphere_distance;
+    float reflect_depth;
     std::shared_ptr<Collidable_List> world_reference;
     std::shared_ptr<Vec3f> last_direction;
     std::shared_ptr<Vec3f> last_hit;
     std::shared_ptr<Vec3f> last_center;
     std::shared_ptr<Vec3f> last_normal;
+    //std::shared_ptr<Vec3f> last_origin;
     std::shared_ptr<Material> mat_ptr;
     double t;
     bool front_face;

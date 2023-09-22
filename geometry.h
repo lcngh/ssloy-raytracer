@@ -16,6 +16,7 @@ class Vec3f {/*vec3 class based off of peter shirley's implementation in Ray Tra
         Vec3f() : e{0.f,0.f,0.f} {}
         Vec3f(float x, float y) : e{x,y,0.f} {}
         Vec3f(float x, float y, float z) : e{x,y,z} {}
+        Vec3f(shared_ptr<Vec3f> v)  : e{v->e[0], v->e[1], v->e[2]} {}
 
         Vec3f operator-() const {return Vec3f(-e[0], -e[1], -e[2]);}
 
@@ -23,6 +24,14 @@ class Vec3f {/*vec3 class based off of peter shirley's implementation in Ray Tra
             e[0] *= f;
             e[1] *= f;
             e[2] *= f;
+
+            return *this;
+        }
+
+        Vec3f& operator*=(const Vec3f v) {
+            e[0] *= v.e[0];
+            e[1] *= v.e[1];
+            e[2] *= v.e[2];
 
             return *this;
         }
@@ -59,7 +68,9 @@ inline Vec3f operator-(const shared_ptr<Vec3f> &u, const Vec3f &v) {
 }
 
 inline Vec3f operator-(const Vec3f &u, const shared_ptr<Vec3f> &v) {
-    return Vec3f(u.e[0] - v->e[0], u.e[1] - v->e[1], u.e[2] - v->e[2]);
+    return Vec3f(u.e[0] - v->e[0],
+                 u.e[1] - v->e[1], 
+                 u.e[2] - v->e[2]);
 }
 
 inline Vec3f operator+(const Vec3f &u, const Vec3f &v) {
