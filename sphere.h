@@ -6,7 +6,6 @@
 #include "collidable_list.h"
 
 //const float infinity = std::numeric_limits<float>::infinity();
-
 class Sphere : public Collidable {/*sphere class based off ssloy's tinyraytracer lessons*/
 
     public:

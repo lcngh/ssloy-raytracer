@@ -49,14 +49,20 @@ Vec3f cast_ray(const Vec3f &origin, const Vec3f &direction, Collidable_List &wor
         record.last_direction = make_shared<Vec3f>(direction);
         record.world_reference = make_shared<Collidable_List>(world);
         distance_in_range = nearest_distance<1000;
-    }
-
-    if (distance_in_range) {
-        //std::cout << nearest_distance << '\n';
-        if (record.mat_ptr->scatter(record, attenuation, diffuse_light_intensity, lights)) {
-            return attenuation;
+        if (distance_in_range) {
+        //std::cout << record.mat_ptr << '\n';
+            if (record.mat_ptr->scatter(record, attenuation, diffuse_light_intensity, lights)) {
+                return attenuation;
+            }
         }
     }
+
+    // if (distance_in_range) {
+    //     //std::cout << record.mat_ptr << '\n';
+    //     if (record.mat_ptr->scatter(record, attenuation, diffuse_light_intensity, lights)) {
+    //         return attenuation;
+    //     }
+    // }
 /* 
     // if (scene_intersect(origin, direction, world, hit, normal, record)) {
     //     if (record.mat_ptr->scatter(record, attenuation, diffuse_light_intensity, lights)) {
