@@ -21,8 +21,6 @@ class Lighting_List : public Light {
     public:
         std::vector<shared_ptr<Light>> objects;
 
-
-
 };
 
 #endif

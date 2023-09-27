@@ -25,7 +25,9 @@ class Collidable_List : public Collidable {
 
 bool Collidable_List::ray_intersect(const Vec3f &origin, const Vec3f &direction, Collision_Record &record) const {
 
-    Collision_Record temp_record;//= record;
+    Collision_Record temp_record;
+/*     
+    //= record;
     //temp_record.t = 0.0;
     // temp_record.reflect_depth = record.reflect_depth;
     //temp_record.t = record.t;
@@ -33,7 +35,7 @@ bool Collidable_List::ray_intersect(const Vec3f &origin, const Vec3f &direction,
     
     //double sphere_distance = std::numeric_limits<double>::max();
     
-    
+ */
     double sphere_distance = 100000000.0;
     // double * sphere_distance_pointer;
     // sphere_distance_pointer = &sphere_distance;
@@ -56,7 +58,7 @@ bool Collidable_List::ray_intersect(const Vec3f &origin, const Vec3f &direction,
             //exit(0);
             record = temp_record;
         }
-
+/* 
     ///////
     //  Valuable lesson was learned here...
     //  in the above if block, adding logic to the else block would do funky things
@@ -68,13 +70,14 @@ bool Collidable_List::ray_intersect(const Vec3f &origin, const Vec3f &direction,
         //     //break;
         // }
         //std::cout << "AFTERIF: "<< record.t << '\n';
-        
+ */
     }
     sphere_distance = 100000000.0;
     temp_record.t = 0.0;
 
     return collision;
 }
+/* 
         //std::cout << record.t << '\n';
         //std::cout << temp_record.t << '\n';
         //collision = true;
@@ -182,5 +185,5 @@ bool Collidable_List::ray_intersect(const Vec3f &origin, const Vec3f &direction,
 
     //return collision;
 
-
+ */
 #endif

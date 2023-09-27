@@ -5,7 +5,7 @@
 //#include "geometry.h"
 #include "collidable_list.h"
 
-const float infinity = std::numeric_limits<float>::infinity();
+//const float infinity = std::numeric_limits<float>::infinity();
 
 class Sphere : public Collidable {/*sphere class based off ssloy's tinyraytracer lessons*/
 
@@ -33,6 +33,7 @@ class Sphere : public Collidable {/*sphere class based off ssloy's tinyraytracer
             }
             record.t = 0.0;
             return false;
+/* 
             // Vec3f oc = origin - center;
             // auto a = direction.length_squared();
             // auto half_b = dot(oc, direction);
@@ -61,7 +62,7 @@ class Sphere : public Collidable {/*sphere class based off ssloy's tinyraytracer
             //record.point = 
             //record.sphere_distance =
             //record.last_center = make_shared<Vec3f>(center);
-
+*/
         } 
 
     public:
